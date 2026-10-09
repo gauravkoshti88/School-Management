@@ -5,7 +5,7 @@ import {
   staffLogin,
   staffLogout,
 } from "../controllers/auth.controller.js";
-import staffAuth from "../middleware/StaffAuth.js";
+import staffAuth from "../middleware/staffAuth.js";
 
 const authRouter = express.Router();
 

@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { dbConnect } from "./config/dbConnection.js";
 
@@ -20,10 +23,8 @@ import websiteRouter from "./routes/website.routes.js";
 import studentAttendanceRouter from "./routes/studentAttendance.routes.js";
 import libraryRouter from "./routes/library.routes.js";
 
-dotenv.config();
-
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3800;
 
 app.use(
   cors({
@@ -34,52 +35,39 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
 
-// Test Routes
-app.get("/", async (req, res) => {
-  res.send("Server Runnig");
+app.get("/", (req, res) => {
+  res.status(200).send("Server Running");
 });
 
 app.use("/api/website", websiteRouter);
-
 app.use("/api/admin", adminRouter);
-
 app.use("/api/admin/dashboard", adminDashboardRouter);
-
-// Peon dashboard
 app.use("/api/staff/peon/dashboard", peonDashboardRouter);
-
 app.use("/api/staff", staffRouter);
-
-// Admin staff attendance
 app.use("/api/admin/staff-attendance", staffAttendanceRouter);
-
 app.use("/api/admin/students", adminStudentRouter);
-
 app.use("/api/classes", classRouter);
-
 app.use("/api/auth", authRouter);
-
-// Teacher student management
 app.use("/api/staff/students", staffStudentRouter);
-
-// Teacher student attendance
 app.use("/api/staff/attendance", studentAttendanceRouter);
-
-// Staff dashboard
 app.use("/api/staff/dashboard", staffDashboardRouter);
-
-// Library
 app.use("/api/library", libraryRouter);
-
 app.use("/api/auth/student", studentAuthRouter);
-
 app.use("/api/student/dashboard", studentDashboardRouter);
 
-app.listen(port, () => {
-  dbConnect();
+const startServer = async () => {
+  try {
+    await dbConnect();
 
-  console.log(`Server is running on http://localhost:${port}`);
-});
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port} 🚀`);
+    });
+  } catch (error) {
+    console.error("Server startup failed:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

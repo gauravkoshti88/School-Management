@@ -12,6 +12,8 @@ const getWebsite = async (req, res) => {
       website = await Website.create({
         websiteName: "School Management System",
       });
+
+      website = website.toObject();
     }
 
     return res.status(200).json({
@@ -20,7 +22,7 @@ const getWebsite = async (req, res) => {
       website,
     });
   } catch (error) {
-    console.error("Get website error:", error);
+    console.error("Get website error:", error.message);
 
     return res.status(500).json({
       success: false,
